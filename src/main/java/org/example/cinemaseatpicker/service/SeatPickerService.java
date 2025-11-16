@@ -207,5 +207,6 @@ public class SeatPickerService {
         } else {
             return true; // No better options, allow despite fragmentation (cinema is nearly full)
         }
+        
     }
 }
