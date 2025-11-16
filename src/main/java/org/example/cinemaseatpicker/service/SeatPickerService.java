@@ -89,50 +89,76 @@ public class SeatPickerService {
         }
     }
 
-    private boolean doesSelectionCreateFragmentation(List<Seat> selectedSeats) {
-        // Group selected seats by row
-        Map<Integer, List<Integer>> selectedByRow = new HashMap<>();
-        for (Seat selectedSeat : selectedSeats) {
-            selectedByRow.computeIfAbsent(selectedSeat.getRow(), k -> new ArrayList<>())
-                    .add(selectedSeat.getSeat());
+    public boolean checkSeats(List<Seat> selectedSeats) {
+        // Validate all seats are from same row
+        if (selectedSeats.isEmpty()) return false;
+
+        int firstRow = selectedSeats.get(0).getRow();
+        for (Seat seat : selectedSeats) {
+            if (seat.getRow() != firstRow) {
+                return false; // Reject if seats from different rows
+            }
         }
 
-        // Check only the rows where seats are being selected
-        for (Map.Entry<Integer, List<Integer>> entry : selectedByRow.entrySet()) {
-            int row = entry.getKey();
-            List<Integer> selectedSeatNumbers = entry.getValue();
+        // Check if this selection creates fragmentation
+        boolean createsFragmentation = doesSelectionCreateFragmentation(selectedSeats);
 
-            // Create simulation for this row
-            boolean[] rowState = new boolean[10]; // false = available, true = taken
-            List<Seat> rowSeats = seatMap.get(row);
+        if (!createsFragmentation) {
+            return true; // Good selection, no fragmentation
+        }
 
-            for (Seat seat : rowSeats) {
-                rowState[seat.getSeat() - 1] = seat.isTaken();
-            }
+        // Selection creates fragmentation - check if better alternatives exist
+        int requestedCount = selectedSeats.size();
+        boolean hasAlternatives = hasValidAlternatives(requestedCount);
 
-            // Apply the selected seats to this row
-            for (int seatNum : selectedSeatNumbers) {
-                rowState[seatNum - 1] = true;
-            }
+        if (hasAlternatives) {
+            return false; // Better options exist, reject this selection
+        } else {
+            return true; // No better options, allow despite fragmentation (cinema is nearly full)
+        }
 
-            // Check for NEW isolated seats created by this selection
-            for (int seatNum : selectedSeatNumbers) {
-                int index = seatNum - 1;
+    }
 
-                // Check left neighbor
-                if (index > 0 && !rowState[index - 1]) {
-                    boolean leftTaken = (index - 1 == 0) || rowState[index - 2];
-                    if (leftTaken) {
-                        return true; // Creates isolated seat on the left
-                    }
+    private boolean doesSelectionCreateFragmentation(List<Seat> selectedSeats) {
+        // All seats are from same row (validated in checkSeats)
+        int row = selectedSeats.get(0).getRow();
+
+        // Get seat numbers
+        List<Integer> selectedSeatNumbers = new ArrayList<>();
+        for (Seat seat : selectedSeats) {
+            selectedSeatNumbers.add(seat.getSeat());
+        }
+
+        // Create simulation for this row
+        boolean[] rowState = new boolean[10]; // false = available, true = taken
+        List<Seat> rowSeats = seatMap.get(row);
+
+        for (Seat seat : rowSeats) {
+            rowState[seat.getSeat() - 1] = seat.isTaken();
+        }
+
+        // Apply the selected seats to this row
+        for (int seatNum : selectedSeatNumbers) {
+            rowState[seatNum - 1] = true;
+        }
+
+        // Check for NEW isolated seats created by this selection
+        for (int seatNum : selectedSeatNumbers) {
+            int index = seatNum - 1;
+
+            // Check left neighbor
+            if (index > 0 && !rowState[index - 1]) {
+                boolean leftTaken = (index - 1 == 0) || rowState[index - 2];
+                if (leftTaken) {
+                    return true; // Creates isolated seat on the left
                 }
+            }
 
-                // Check right neighbor
-                if (index < rowState.length - 1 && !rowState[index + 1]) {
-                    boolean rightTaken = (index + 1 == rowState.length - 1) || rowState[index + 2];
-                    if (rightTaken) {
-                        return true; // Creates isolated seat on the right
-                    }
+            // Check right neighbor
+            if (index < rowState.length - 1 && !rowState[index + 1]) {
+                boolean rightTaken = (index + 1 == rowState.length - 1) || rowState[index + 2];
+                if (rightTaken) {
+                    return true; // Creates isolated seat on the right
                 }
             }
         }
@@ -190,23 +216,5 @@ public class SeatPickerService {
         return groups;
     }
 
-    public boolean checkSeats(List<Seat> selectedSeats) {
-        // Check if this selection creates fragmentation
-        boolean createsFragmentation = doesSelectionCreateFragmentation(selectedSeats);
 
-        if (!createsFragmentation) {
-            return true; // Good selection, no fragmentation
-        }
-
-        // Selection creates fragmentation - check if better alternatives exist
-        int requestedCount = selectedSeats.size();
-        boolean hasAlternatives = hasValidAlternatives(requestedCount);
-
-        if (hasAlternatives) {
-            return false; // Better options exist, reject this selection
-        } else {
-            return true; // No better options, allow despite fragmentation (cinema is nearly full)
-        }
-        
-    }
 }

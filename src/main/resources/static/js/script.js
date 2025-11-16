@@ -41,6 +41,21 @@ async function loadSeats() {
 
             seatDiv.addEventListener("click", () => {
                 if (seatDiv.classList.contains("seat--taken")) return;
+
+                // Get all currently selected seats
+                const currentlySelected = document.querySelectorAll(".seat--selected");
+
+                // If seats are already selected, check if same row
+                if (currentlySelected.length > 0) {
+                    const firstSelectedRow = currentlySelected[0].dataset.id.split("-")[0];
+                    const clickedRow = seatDiv.dataset.id.split("-")[0];
+
+                    if (firstSelectedRow !== clickedRow) {
+                        alert("Vælg venligst sæder fra samme række");
+                        return; // Block the selection
+                    }
+                }
+
                 seatDiv.classList.toggle("seat--selected");
                 console.log("Valgt sæde:", seatDiv.dataset.id);
             });
