@@ -15,7 +15,7 @@ async function loadSeats() {
     });
 
     // Create rows
-    for (let rowNum = 1; rowNum <= 10; rowNum++) {
+    for (let rowNum = 1; rowNum <= 5; rowNum++) {
         const rowDiv = document.createElement("div");
         rowDiv.className = "row";
 
@@ -55,21 +55,47 @@ async function loadSeats() {
 
 document.addEventListener("DOMContentLoaded", loadSeats);
 
-document.getElementById("checkButton").addEventListener("click", async () => {
+document.getElementById("setupTestButton").addEventListener("click", async () => {
+    const confirmed = confirm("Dette vil nulstille alle sæder og opsætte test data. Fortsæt?");
+
+    if (!confirmed) return;
+
+    await fetch("http://localhost:8080/setup-test", {
+        method: "POST"
+    });
+
+    // Reload seats to show new state
+    await loadSeats();
+});
+
+document.getElementById("orderButton").addEventListener("click", async () => {
     const selected = [...document.querySelectorAll(".seat--selected")]
         .map(s => ({
             row: parseInt(s.dataset.id.split("-")[0]),
             seat: parseInt(s.dataset.id.split("-")[1]),
         }));
 
-    console.log(selected)
+    if (selected.length === 0) {
+        alert("Vælg venligst mindst ét sæde");
+        return;
+    }
 
-    const response = await fetch("http://localhost:8080/check", {
+    console.log("Valgte sæder:", selected);
+
+    const response = await fetch("http://localhost:8080/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(selected)
     });
 
-    const result = await response.json();
-    console.log(result);
+    const isValid = await response.json();
+    console.log("Bestilling resultat:", isValid);
+
+    if (isValid) {
+        alert("Sæder bestilt!");
+        // Reload seats to show the newly taken seats
+        await loadSeats();
+    } else {
+        alert("Dit valg efterlader enkelte pladser. Vælg venligst andre sæder.");
+    }
 });

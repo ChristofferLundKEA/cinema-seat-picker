@@ -21,10 +21,20 @@ public class SeatPickerController {
         return seatPickerService.getAllSeats();
     }
 
-    @PostMapping("/check")
-    public boolean checkSeats(@RequestBody List<Seat> seats ){
-        return seatPickerService.checkSeats(seats);
+    @PostMapping("/order")
+    public boolean orderSeats(@RequestBody List<Seat> seats) {
+        boolean isValid = seatPickerService.checkSeats(seats);
 
+        if (isValid) {
+            seatPickerService.orderSeats(seats);
+        }
+
+        return isValid;
+    }
+
+    @PostMapping("/setup-test")
+    public void setupTestScenario() {
+        seatPickerService.setupTestScenario();
     }
 
 }
