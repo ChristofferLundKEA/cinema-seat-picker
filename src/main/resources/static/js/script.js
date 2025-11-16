@@ -114,3 +114,16 @@ document.getElementById("orderButton").addEventListener("click", async () => {
         alert("Dit valg efterlader enkelte pladser. Vælg venligst andre sæder.");
     }
 });
+
+document.getElementById("resetButton").addEventListener("click", async () => {
+    const confirmed = confirm("Dette vil nulstille alle sæder til ledig. Fortsæt?");
+
+    if (!confirmed) return;
+
+    await fetch("http://localhost:8080/reset-seats", {
+        method: "GET"
+    });
+
+    // Reload seats to show reset state
+    await loadSeats();
+});

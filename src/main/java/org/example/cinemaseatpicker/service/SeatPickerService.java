@@ -13,7 +13,7 @@ import java.util.Map;
 public class SeatPickerService {
 
 
-    private final Map<Integer, List<Seat>> seatMap = new HashMap<>();
+    private Map<Integer, List<Seat>> seatMap = new HashMap<>();
 
     @PostConstruct
     public void initSeats() {
@@ -39,6 +39,15 @@ public class SeatPickerService {
         return allSeats;
     }
 
+    public List<Seat> resetSeats() {
+        for (int row = 1; row <= 5; row++) {
+            for (Seat seat : seatMap.get(row)) {
+                seat.setTaken(false);
+            }
+        }
+        return getAllSeats();
+    }
+
     public void setupTestScenario() {
         // Reset all seats first
         for (int row = 1; row <= 5; row++) {
@@ -48,7 +57,7 @@ public class SeatPickerService {
         }
 
         // Row 1: Completely full (all taken) - baseline
-        for (int i = 0; i < 10; i++) {
+        for (int i = 5; i < 10; i++) {
             seatMap.get(1).get(i).setTaken(true);
         }
 
@@ -215,6 +224,7 @@ public class SeatPickerService {
 
         return groups;
     }
+
 
 
 }

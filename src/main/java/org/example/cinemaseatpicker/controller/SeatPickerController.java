@@ -37,4 +37,9 @@ public class SeatPickerController {
         seatPickerService.setupTestScenario();
     }
 
+    @GetMapping("/reset-seats")
+    public List<Seat> resetSeats() {
+        return seatPickerService.resetSeats();
+    }
+
 }
