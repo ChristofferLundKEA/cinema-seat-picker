@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CinemaSeatPickerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CinemaSeatPickerApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CinemaSeatPickerApplication.class, args);
+    }
 
 }

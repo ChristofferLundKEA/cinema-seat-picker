@@ -1,0 +1,83 @@
+:root {
+    --gap: 8px;
+    --seat-size: 34px;
+    --radius: 6px;
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    margin: 24px;
+    line-height: 1.4;
+    background: #f8f8f8;
+    color: #222;
+}
+
+.screen {
+    margin: 0 auto 10px;
+    width: min(700px, 90vw);
+    height: 10px;
+    background: linear-gradient(180deg, #ddd, #f7f7f7);
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15) inset;
+}
+.screen-label {
+    text-align: center;
+    color: #555;
+    margin-bottom: 18px;
+}
+
+.theater {
+    display: grid;
+    gap: 12px;
+    justify-content: center;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--gap);
+}
+
+.row__label {
+    width: 20px;
+    text-align: right;
+    margin-right: 8px;
+    font-weight: bold;
+    color: #666;
+}
+
+.seats {
+    display: flex;
+    gap: var(--gap);
+}
+
+.seat {
+    width: var(--seat-size);
+    height: var(--seat-size);
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.seat:hover {
+    /*background: #e8f2ff;*/
+    border-color: rgba(58, 58, 58, 0.62);
+}
+
+.seat--taken {
+    background: #df5b5b;
+    cursor: not-allowed;
+}
+
+.seat--selected {
+    background: #75cf6c;
+    /*border-color: #80b0ff;*/
+}
+
+@media (max-width: 600px) {
+    :root { --seat-size: 28px; --gap: 5px; }
+}
