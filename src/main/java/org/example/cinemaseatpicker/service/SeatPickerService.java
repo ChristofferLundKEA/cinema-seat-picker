@@ -13,7 +13,7 @@ import java.util.Map;
 public class SeatPickerService {
 
 
-    private Map<Integer, List<Seat>> seatMap = new HashMap<>();
+    private final Map<Integer, List<Seat>> seatMap = new HashMap<>();
 
     @PostConstruct
     public void initSeats() {
@@ -175,7 +175,7 @@ public class SeatPickerService {
         return false; // Does not create fragmentation
     }
 
-    private boolean hasValidAlternatives(int requestedCount) {
+    public boolean hasValidAlternatives(int requestedCount) {
         // Check each row for contiguous groups of available seats
         for (int row = 1; row <= 5; row++) {
             List<Integer> contiguousGroups = findContiguousGroups(row);
