@@ -99,21 +99,12 @@ public class SeatPickerService {
     }
 
     public boolean checkSeats(List<Seat> selectedSeats) {
-        // Validate all seats are from same row
-        if (selectedSeats.isEmpty()) return false;
-
-        int firstRow = selectedSeats.get(0).getRow();
-        for (Seat seat : selectedSeats) {
-            if (seat.getRow() != firstRow) {
-                return false; // Reject if seats from different rows
-            }
-        }
 
         // Check if this selection creates fragmentation
         boolean createsFragmentation = doesSelectionCreateFragmentation(selectedSeats);
 
         if (!createsFragmentation) {
-            return true; // Good selection, no fragmentation
+            return true;
         }
 
         // Selection creates fragmentation - check if better alternatives exist
@@ -123,13 +114,13 @@ public class SeatPickerService {
         if (hasAlternatives) {
             return false; // Better options exist, reject this selection
         } else {
-            return true; // No better options, allow despite fragmentation (cinema is nearly full)
+            return true; // No better options, allow despite fragmentation
         }
 
     }
 
     private boolean doesSelectionCreateFragmentation(List<Seat> selectedSeats) {
-        // All seats are from same row (validated in checkSeats)
+        // All seats are from same row
         int row = selectedSeats.get(0).getRow();
 
         // Get seat numbers
@@ -157,16 +148,16 @@ public class SeatPickerService {
 
             // Check left neighbor
             if (index > 0 && !rowState[index - 1]) {
-                boolean leftTaken = (index - 1 == 0) || rowState[index - 2];
-                if (leftTaken) {
+                boolean nextToLeftIsTaken = (index - 1 == 0) || rowState[index - 2];
+                if (nextToLeftIsTaken) {
                     return true; // Creates isolated seat on the left
                 }
             }
 
             // Check right neighbor
             if (index < rowState.length - 1 && !rowState[index + 1]) {
-                boolean rightTaken = (index + 1 == rowState.length - 1) || rowState[index + 2];
-                if (rightTaken) {
+                boolean nextToRightIsTaken = (index + 1 == rowState.length - 1) || rowState[index + 2];
+                if (nextToRightIsTaken) {
                     return true; // Creates isolated seat on the right
                 }
             }
@@ -181,14 +172,9 @@ public class SeatPickerService {
             List<Integer> contiguousGroups = findContiguousGroups(row);
 
             for (int groupSize : contiguousGroups) {
-                // Valid alternative exists if:
-                // - Exactly the requested count (can take all, no fragmentation)
-                // - Or 2+ more than requested (can take N, leave 2+, no fragmentation)
                 if (groupSize == requestedCount || groupSize >= requestedCount + 2) {
                     return true;
                 }
-                // If groupSize == requestedCount + 1, taking requestedCount leaves 1 isolated
-                // This creates fragmentation, so it's NOT a valid alternative
             }
         }
 
@@ -197,6 +183,7 @@ public class SeatPickerService {
 
     private List<Integer> findContiguousGroups(int row) {
         List<Integer> groups = new ArrayList<>();
+
         boolean[] rowState = new boolean[10];
 
         // Get current row state
@@ -217,7 +204,7 @@ public class SeatPickerService {
             }
         }
 
-        // Don't forget the last group if row ends with available seats
+        // last group if row ends with available seats
         if (consecutiveCount > 0) {
             groups.add(consecutiveCount);
         }

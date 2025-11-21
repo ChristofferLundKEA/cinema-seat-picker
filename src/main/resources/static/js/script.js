@@ -111,7 +111,7 @@ document.getElementById("orderButton").addEventListener("click", async () => {
         // Reload seats to show the newly taken seats
         await loadSeats();
     } else {
-        alert("Dit valg efterlader enkelte pladser. Vælg venligst andre sæder.");
+        alert("Dit valg efterlader enkelte isolerede pladser. Vælg venligst andre sæder.");
     }
 });
 
