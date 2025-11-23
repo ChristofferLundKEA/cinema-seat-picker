@@ -249,20 +249,6 @@ class SeatPickerServiceTest {
     @DisplayName("Already Occupied Seats")
     class OccupiedSeatsTests {
 
-        @Test
-        @DisplayName("Should reject selection of already taken seats")
-        void testRejectAlreadyTakenSeats() {
-            markSeatsAsTaken(1, 3, 4, 5);
-
-            // The checkSeats method doesn't explicitly check for already taken seats
-            // It simulates the selection, so this test verifies the behavior
-            List<Seat> selection = createSelection(1, 3, 4);
-            boolean result = service.checkSeats(selection);
-
-            // The service should handle this appropriately
-            // Note: Based on the current implementation, this might need adjustment
-            // if the service doesn't check for already taken seats
-        }
 
         @Test
         @DisplayName("Should handle partial overlap with taken seats")

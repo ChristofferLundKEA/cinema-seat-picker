@@ -73,29 +73,6 @@ public class SeatPickerSimulation {
     }
 
     /**
-     * Generates a random group size based on distribution type
-     */
-    public int createGroup(String distribution) {
-        return switch (distribution) {
-            case "small" -> (int) (Math.random() * 3) + 2; // 2-4 people
-            case "big" -> (int) (Math.random() * 6) + 3; // 3-8 people
-            case "random" -> (int) (Math.random() * 6) + 1; // 1-6 people
-            default -> 0;
-        };
-    }
-
-    /**
-     * Generates a sequence of group requests for simulation
-     */
-    public List<Integer> generateGroupSequence(int numGroups, String distribution) {
-        List<Integer> groups = new ArrayList<>();
-        for (int i = 0; i < numGroups; i++) {
-            groups.add(createGroup(distribution));
-        }
-        return groups;
-    }
-
-    /**
      * NAIVE SIMULATION: Randomly selects from available contiguous blocks
      */
     public SimulationResult runNaiveSimulation(List<Integer> groupSequence) {
@@ -445,62 +422,13 @@ public class SeatPickerSimulation {
         System.out.println();
     }
 
-    /**
-     * Runs multiple iterations and aggregates results
-     */
-    public void runMultipleIterations(int iterations, int groupsPerIteration, String distribution) {
-        int totalNaiveIsolated = 0;
-        int totalAlgorithmIsolated = 0;
-        double totalNaiveFragRate = 0;
-        double totalAlgorithmFragRate = 0;
-
-        System.out.println("Running " + iterations + " iterations with " + groupsPerIteration +
-                         " groups each (" + distribution + " distribution)");
-        System.out.println();
-
-        for (int i = 0; i < iterations; i++) {
-            List<Integer> groupSequence = generateGroupSequence(groupsPerIteration, distribution);
-            SimulationResult naiveResult = runNaiveSimulation(groupSequence);
-            SimulationResult algorithmResult = runAlgorithmSimulation(groupSequence);
-
-            totalNaiveIsolated += naiveResult.getSingleIsolatedSeats();
-            totalAlgorithmIsolated += algorithmResult.getSingleIsolatedSeats();
-            totalNaiveFragRate += naiveResult.getFragmentationRate();
-            totalAlgorithmFragRate += algorithmResult.getFragmentationRate();
-
-            System.out.println(String.format("Iteration %d: Naive=%d isolated (%.2f%%), Algorithm=%d isolated (%.2f%%)",
-                i + 1, naiveResult.getSingleIsolatedSeats(), naiveResult.getFragmentationRate(),
-                algorithmResult.getSingleIsolatedSeats(), algorithmResult.getFragmentationRate()));
-        }
-
-        double avgNaiveIsolated = totalNaiveIsolated / (double) iterations;
-        double avgAlgorithmIsolated = totalAlgorithmIsolated / (double) iterations;
-        double avgNaiveFragRate = totalNaiveFragRate / iterations;
-        double avgAlgorithmFragRate = totalAlgorithmFragRate / iterations;
-
-        System.out.println();
-        System.out.println("=".repeat(60));
-        System.out.println("AGGREGATE RESULTS");
-        System.out.println("=".repeat(60));
-        System.out.println(String.format("Average isolated seats - Naive: %.2f, Algorithm: %.2f",
-            avgNaiveIsolated, avgAlgorithmIsolated));
-        System.out.println(String.format("Average fragmentation rate - Naive: %.2f%%, Algorithm: %.2f%%",
-            avgNaiveFragRate, avgAlgorithmFragRate));
-        System.out.println(String.format("Absolute reduction: %.2f isolated seats per run",
-            avgNaiveIsolated - avgAlgorithmIsolated));
-    }
-
     // Example usage
     public static void main(String[] args) {
         SeatPickerSimulation simulation = new SeatPickerSimulation();
 
-        // Single comparison with a specific sequence (longer for bigger cinema)
+        // Single comparison with a specific sequence
         List<Integer> testSequence = Arrays.asList(3, 2, 4, 2, 5, 3, 2, 4, 3, 2, 4, 2, 3, 5, 2, 2, 3, 4, 2, 3,
                                                      4, 3, 2, 5, 3, 2, 4, 2, 3, 2, 3, 2, 4, 2, 3, 2);
         simulation.runComparison(testSequence);
-
-        // Multiple iterations for statistical significance (more groups for bigger cinema)
-        System.out.println("\n\n");
-        simulation.runMultipleIterations(10, 30, "random");
     }
 }
