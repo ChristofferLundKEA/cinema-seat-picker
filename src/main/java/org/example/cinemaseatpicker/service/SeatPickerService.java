@@ -12,7 +12,6 @@ import java.util.Map;
 @Service
 public class SeatPickerService {
 
-
     private final Map<Integer, List<Seat>> seatMap = new HashMap<>();
 
     @PostConstruct
@@ -70,9 +69,9 @@ public class SeatPickerService {
 
         // Row 3: Seats 2, 4, 6, 8 available (isolated singles) - test if we can select when no alternatives exist
         for (int i = 0; i < 10; i++) {
-            if (i != 1 && i != 3 && i != 5 && i != 7) { // seats 2, 4, 6, 8
+             // seats 2, 4, 6, 8
                 seatMap.get(3).get(i).setTaken(true);
-            }
+
         }
 
         // Row 4: Seats 1-4 available (4 consecutive) - test "2 left OR 2 right, not 2 middle" rule
@@ -211,7 +210,4 @@ public class SeatPickerService {
 
         return groups;
     }
-
-
-
 }

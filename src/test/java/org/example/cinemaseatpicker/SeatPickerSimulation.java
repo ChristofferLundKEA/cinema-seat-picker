@@ -50,12 +50,7 @@ public class SeatPickerSimulation {
         }
 
         // Getters
-        public String getSimulationType() { return simulationType; }
         public int getSingleIsolatedSeats() { return singleIsolatedSeats; }
-        public int getGroupsPlaced() { return groupsPlaced; }
-        public int getGroupsRejected() { return groupsRejected; }
-        public int getTotalSeatsOccupied() { return totalSeatsOccupied; }
-        public double getUtilizationPercentage() { return utilizationPercentage; }
         public double getFragmentationRate() { return fragmentationRate; }
     }
 
